@@ -1,0 +1,21 @@
+create or replace TRIGGER trg_demo_task_abreviatura
+BEFORE INSERT ON DEMO_TASK
+FOR EACH ROW
+DECLARE
+    v_last_suffix NUMBER; 
+    v_abreviatura_espacio VARCHAR2(50); 
+BEGIN
+    
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(abreviatura, '\d+$'))), 0)
+    INTO v_last_suffix
+    FROM DEMO_TASK
+    WHERE cod_espacio_trabajo = :NEW.cod_espacio_trabajo;
+
+    SELECT abreviatura
+    INTO v_abreviatura_espacio
+    FROM DEMO_ESPACIO_TRABAJO
+    WHERE cod_espacio_trabajo = :NEW.cod_espacio_trabajo;
+
+    :NEW.abreviatura := v_abreviatura_espacio || '-' || (v_last_suffix + 1);
+END;
+/
