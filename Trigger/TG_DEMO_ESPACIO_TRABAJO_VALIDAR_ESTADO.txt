@@ -1,0 +1,9 @@
+create or replace TRIGGER tg_demo_espacio_trabajo_validar_estado
+BEFORE UPDATE ON DEMO_ESPACIO_TRABAJO
+FOR EACH ROW
+BEGIN
+    IF(:NEW.estado != :OLD.estado AND :NEW.userid != :OLD.userid) OR (:NEW.userid != :OLD.userid) THEN
+    RAISE_APPLICATION_ERROR(-20001, 'Solo el usuario creador del espacio puede cambiar de estado');
+  END IF;
+END;
+/

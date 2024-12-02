@@ -1,0 +1,25 @@
+create or replace FUNCTION authenticate_usuario (
+    p_username IN VARCHAR2,
+    p_password IN VARCHAR2
+) RETURN BOOLEAN IS
+    l_stored_password DEMO_USERS.PASSWORD%TYPE;
+BEGIN
+    -- Verifica si el usuario existe y obtiene la contraseña almacenada
+    SELECT PASSWORD 
+    INTO l_stored_password
+    FROM DEMO_USERS
+    WHERE UPPER(USUARIO) = UPPER(p_username); -- Comparación sin distinción de mayúsculas/minúsculas
+
+    -- Verifica si la contraseña proporcionada coincide con la almacenada
+    IF l_stored_password = p_password THEN
+        -- Asigna el nombre de usuario a APP_USER después de la autenticación exitosa
+        APEX_CUSTOM_AUTH.SET_USER(p_username);
+        RETURN TRUE; -- Autenticación exitosa
+    ELSE
+        RETURN FALSE; -- Contraseña incorrecta
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN FALSE; -- El usuario no existe
+END authenticate_usuario;
+/

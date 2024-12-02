@@ -1,0 +1,9 @@
+create or replace TRIGGER trg_demo_espacio_user
+AFTER INSERT ON DEMO_ESPACIO_TRABAJO
+FOR EACH ROW
+BEGIN
+   -- Si no se especifica un ID en el INSERT, toma el siguiente valor de la secuencia
+   INSERT INTO DEMO_ESPACIO_USER (COD_ESPACIO_TRABAJO,USERID,ESTADO)
+   VALUES (:NEW.COD_ESPACIO_TRABAJO, :NEW.USERID,'A');
+END;
+/
